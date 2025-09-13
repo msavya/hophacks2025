@@ -1,3 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Ocean Background Animation */
+.ocean-bg {
+  background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 25%, #0369a1 50%, #075985 75%, #0c4a6e 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.bubble {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: float-up 8s infinite linear;
+}
+
+.bubble:nth-child(1) { left: 10%; width: 20px; height: 20px; animation-delay: 0s; animation-duration: 8s; }
+.bubble:nth-child(2) { left: 20%; width: 15px; height: 15px; animation-delay: 2s; animation-duration: 10s; }
+.bubble:nth-child(3) { left: 30%; width: 25px; height: 25px; animation-delay: 4s; animation-duration: 7s; }
+.bubble:nth-child(4) { left: 40%; width: 18px; height: 18px; animation-delay: 1s; animation-duration: 9s; }
+.bubble:nth-child(5) { left: 50%; width: 22px; height: 22px; animation-delay: 3s; animation-duration: 6s; }
+.bubble:nth-child(6) { left: 60%; width: 16px; height: 16px; animation-delay: 5s; animation-duration: 11s; }
+.bubble:nth-child(7) { left: 70%; width: 28px; height: 28px; animation-delay: 0.5s; animation-duration: 8.5s; }
+.bubble:nth-child(8) { left: 80%; width: 14px; height: 14px; animation-delay: 2.5s; animation-duration: 9.5s; }
+.bubble:nth-child(9) { left: 90%; width: 20px; height: 20px; animation-delay: 4.5s; animation-duration: 7.5s; }
+
+@keyframes float-up {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) scale(1);
+    opacity: 0;
+  }
+}
+
+.ocean-bg {
+  position: relative;
+  overflow: hidden;
+  height: 600px; /* adjust to fit your top section */
+}
+
+/* Fish container */
+.swimming-character {
+  position: absolute;
+  z-index: 1;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* Fish image */
+.character-img {
+  width: 60px;
+  height: 60px;
+  transition: transform 0.5s linear;
+}
+
+/* Swim horizontally while flipping */
+@keyframes swim-horizontal {
+  0%   { left: -150px; transform: scaleX(1); } /* start off-screen left */
+  50%  { left: 50vw; transform: scaleX(-1); }  /* middle of screen, flip */
+  100% { left: 110vw; transform: scaleX(1); } /* exit off-screen right */
+}
+/* Vertical sine-wave motion for swimming */
+@keyframes swim-vertical {
+  0%   { transform: translateY(0px); }
+  25%  { transform: translateY(-10px); }
+  50%  { transform: translateY(0px); }
+  75%  { transform: translateY(10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Combine both animations */
+.fish1 {
+  top: 10%;
+  animation: swim-horizontal 20s linear infinite, swim-vertical 4s ease-in-out infinite;
+  animation-delay: 0s, 0s;
+  animation-fill-mode: both;
+}
+.fish2 {
+  top: 25%;
+  animation: swim-horizontal 22s linear infinite, swim-vertical 5s ease-in-out infinite;
+  animation-delay: 3s, 1s;
+  animation-fill-mode: both;
+}
+.fish3 {
+  top: 40%;
+  animation: swim-horizontal 24s linear infinite, swim-vertical 4.5s ease-in-out infinite;
+  animation-delay: 6s, 0.5s;
+  animation-fill-mode: both;
+}
+.fish4 {
+  top: 55%;
+  animation: swim-horizontal 21s linear infinite, swim-vertical 5s ease-in-out infinite;
+  animation-delay: 9s, 1s;
+  animation-fill-mode: both;
+}
+.fish5 {
+  top: 70%;
+  animation: swim-horizontal 23s linear infinite, swim-vertical 4s ease-in-out infinite;
+  animation-delay: 12s, 0s;
+  animation-fill-mode: both;
+}
+.fish6 {
+  top: 85%;
+  animation: swim-horizontal 25s linear infinite, swim-vertical 5.5s ease-in-out infinite;
+  animation-delay: 15s, 1.5s;
+  animation-fill-mode: both;
+}

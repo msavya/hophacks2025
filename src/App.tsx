@@ -180,9 +180,43 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ocean-50 via-white to-turquoise-50">
+    <div className="min-h-screen ocean-bg">
+      {/* Animated Bubbles */}
+      <div className="bubble"></div>
+      <div className="bubble"></div>
+      <div className="bubble"></div>
+      <div className="bubble"></div>
+      <div className="bubble"></div>
+      <div className="bubble"></div>
+      <div className="bubble"></div>
+      <div className="bubble"></div>
+      <div className="bubble"></div>
+
+      {/* Swimming Characters */}
+      <div className="swimming-character fish1">
+        <img src="/FionaTheFish.png" alt="Fiona" className="character-img" />
+      </div>
+      <div className="swimming-character fish2">
+        <img src="/GeraldTheSquid.png" alt="Gerald" className="character-img" />
+      </div>
+      <div className="swimming-character fish3">
+        <img src="/OswaldTheWhale.png" alt="Oswald" className="character-img" />
+      </div>
+      <div className="swimming-character fish4">
+        <img src="/ShellyShark.png" alt="Shelly" className="character-img" />
+      </div>
+      <div className="swimming-character fish5">
+        <img
+          src="/TerrenceTheTurtle.png"
+          alt="Terrence"
+          className="character-img"
+        />
+      </div>
+      <div className="swimming-character fish6">
+        <img src="/TravisTheCroc.png" alt="Travis" className="character-img" />
+      </div>
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-ocean-200 sticky top-0 z-50">
+      <header className="bg-white/90 backdrop-blur-sm border-b border-white/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src="/favicon.ico" alt="RippleEffect" className="w-8 h-8" />
@@ -211,12 +245,12 @@ function App() {
             </a>
             <button
               onClick={() => setShowLogin(true)}
-              className="bg-gradient-to-r from-ocean-500 to-turquoise-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-300 flex items-center gap-2"
+              className="bg-gradient-to-r from-blue-800 to-blue-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-300 flex items-center gap-2"
             >
               <LogIn className="w-4 h-4" />
               Login
             </button>
-            <button className="bg-gradient-to-r from-ocean-500 to-turquoise-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-300 flex items-center gap-2">
+            <button className="bg-gradient-to-r from-blue-800 to-blue-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-300 flex items-center gap-2">
               <Chrome className="w-4 h-4" />
               Add to Chrome
             </button>
@@ -225,29 +259,29 @@ function App() {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-20 pb-16 px-6">
+      <section className="pt-20 pb-16 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
               Turn Your
-              <span className="bg-gradient-to-r from-ocean-500 to-turquoise-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-800 to-blue-800 bg-clip-text text-transparent">
                 {" "}
                 Spare Change
               </span>
               <br />
               Into Real Change
             </h1>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-xl text-white/90 mb-8 leading-relaxed drop-shadow-md">
               Automatically round up your online purchases and donate the
               difference to charity. Collect adorable characters, earn badges,
               and see your impact grow—one cent at a time.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-gradient-to-r from-ocean-500 to-turquoise-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3">
+              <button className="bg-gradient-to-r from-blue-800 to-blue-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3">
                 <Chrome className="w-5 h-5" />
                 Add to Chrome - It's Free
               </button>
-              <button className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-full text-lg font-semibold hover:border-gray-400 transition-colors flex items-center justify-center gap-3">
+              <button className="bg-gradient-to-r from-blue-800 to-blue-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3">
                 <Play className="w-5 h-5" />
                 Watch Demo
               </button>
@@ -255,8 +289,8 @@ function App() {
           </div>
 
           {/* Hero Visual */}
-          <div className="relative max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-200">
+          <div className="relative max-w-4xl mx-auto z-10">
+            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/30">
               <div className="flex items-center gap-3 mb-6">
                 <div className="flex gap-2">
                   <div className="w-3 h-3 bg-red-500 rounded-full"></div>
@@ -302,7 +336,7 @@ function App() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white/95 backdrop-blur-sm relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
