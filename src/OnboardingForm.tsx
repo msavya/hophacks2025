@@ -102,13 +102,13 @@ function OnboardingForm({ onComplete, onSkip }: OnboardingFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-ocean-50 via-white to-turquoise-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 rounded-t-2xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-ocean-500 to-turquoise-600 rounded-xl flex items-center justify-center">
                 <Heart className="w-6 h-6 text-white" />
               </div>
               <span className="text-xl font-bold text-gray-900">Welcome to RoundUp!</span>
@@ -129,7 +129,7 @@ function OnboardingForm({ onComplete, onSkip }: OnboardingFormProps) {
              </div>
              <div className="w-full bg-gray-200 rounded-full h-2">
                <div 
-                 className="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full transition-all duration-300"
+                 className="bg-gradient-to-r from-ocean-500 to-turquoise-600 h-2 rounded-full transition-all duration-300"
                  style={{ width: `${(currentStep / 4) * 100}%` }}
                ></div>
              </div>
@@ -141,8 +141,8 @@ function OnboardingForm({ onComplete, onSkip }: OnboardingFormProps) {
           {currentStep === 1 && (
             <div className="space-y-6">
               <div className="text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="w-8 h-8 text-green-600" />
+                <div className="w-16 h-16 bg-ocean-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MapPin className="w-8 h-8 text-ocean-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Where are you located?</h2>
                 <p className="text-gray-600">This helps us recommend local charities and causes in your area.</p>
@@ -155,8 +155,8 @@ function OnboardingForm({ onComplete, onSkip }: OnboardingFormProps) {
                     onClick={() => setPreferences(prev => ({ ...prev, location }))}
                     className={`p-3 rounded-lg border-2 transition-all ${
                       preferences.location === location
-                        ? 'border-green-500 bg-green-50 text-green-700'
-                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
+                        ? 'border-ocean-500 bg-ocean-50 text-ocean-700'
+                        : 'border-gray-200 hover:border-ocean-300 hover:bg-ocean-50'
                     }`}
                   >
                     {location}
@@ -170,8 +170,8 @@ function OnboardingForm({ onComplete, onSkip }: OnboardingFormProps) {
           {currentStep === 2 && (
             <div className="space-y-6">
               <div className="text-center">
-                <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-8 h-8 text-emerald-600" />
+                <div className="w-16 h-16 bg-turquoise-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Heart className="w-8 h-8 text-turquoise-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">What causes matter to you?</h2>
                 <p className="text-gray-600">Select all that apply. We'll personalize your charity recommendations.</p>
@@ -188,22 +188,22 @@ function OnboardingForm({ onComplete, onSkip }: OnboardingFormProps) {
                       onClick={() => handleInterestToggle(category.id)}
                       className={`p-4 rounded-xl border-2 transition-all text-left ${
                         isSelected
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
+                          ? 'border-ocean-500 bg-ocean-50'
+                          : 'border-gray-200 hover:border-ocean-300 hover:bg-ocean-50'
                       }`}
                     >
                       <div className="flex items-start gap-3">
                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                          isSelected ? 'bg-green-100' : 'bg-gray-100'
+                          isSelected ? 'bg-ocean-100' : 'bg-gray-100'
                         }`}>
-                          <Icon className={`w-5 h-5 ${isSelected ? 'text-green-600' : 'text-gray-600'}`} />
+                          <Icon className={`w-5 h-5 ${isSelected ? 'text-ocean-600' : 'text-gray-600'}`} />
                         </div>
                         <div className="flex-1">
                           <h3 className="font-semibold text-gray-900 mb-1">{category.name}</h3>
                           <p className="text-sm text-gray-600">{category.description}</p>
                         </div>
                         {isSelected && (
-                          <Check className="w-5 h-5 text-green-600" />
+                          <Check className="w-5 h-5 text-ocean-600" />
                         )}
                       </div>
                     </button>
@@ -226,13 +226,13 @@ function OnboardingForm({ onComplete, onSkip }: OnboardingFormProps) {
 
                <div className="space-y-6">
                  {/* Option to reach out to more local charities */}
-                 <div className="p-6 bg-green-50 rounded-xl border border-green-200 flex items-center gap-4">
+                 <div className="p-6 bg-ocean-50 rounded-xl border border-ocean-200 flex items-center gap-4">
                    <input
                      type="checkbox"
                      id="reachOutLocally"
                      checked={preferences.reachOutLocally}
                      onChange={e => setPreferences(prev => ({ ...prev, reachOutLocally: e.target.checked }))}
-                     className="w-5 h-5 accent-green-600"
+                     className="w-5 h-5 accent-ocean-600"
                    />
                    <label htmlFor="reachOutLocally" className="text-gray-800 font-medium cursor-pointer">
                      I want to reach out to more charities locally to see the direct impact I'm making
@@ -274,7 +274,7 @@ function OnboardingForm({ onComplete, onSkip }: OnboardingFormProps) {
                      type="text"
                      value={preferences.localCity}
                      onChange={(e) => setPreferences(prev => ({ ...prev, localCity: e.target.value }))}
-                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ocean-500 focus:border-transparent transition-colors"
                      placeholder="Enter your city"
                      required
                    />
@@ -286,7 +286,7 @@ function OnboardingForm({ onComplete, onSkip }: OnboardingFormProps) {
                      type="text"
                      value={preferences.localState}
                      onChange={(e) => setPreferences(prev => ({ ...prev, localState: e.target.value }))}
-                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors"
+                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ocean-500 focus:border-transparent transition-colors"
                      placeholder="Enter your state or province"
                      required
                    />
@@ -313,16 +313,16 @@ function OnboardingForm({ onComplete, onSkip }: OnboardingFormProps) {
            {currentStep === 4 && !preferences.reachOutLocally && (
              <div className="space-y-6">
                <div className="text-center">
-                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                   <Check className="w-8 h-8 text-green-600" />
+                 <div className="w-16 h-16 bg-ocean-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                   <Check className="w-8 h-8 text-ocean-600" />
                  </div>
                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Setup Complete!</h2>
                  <p className="text-gray-600">You're all set to start making a difference with RoundUp.</p>
                </div>
 
-               <div className="bg-green-50 p-6 rounded-xl border border-green-200">
-                 <h3 className="font-semibold text-green-900 mb-3">What's next?</h3>
-                 <ul className="space-y-2 text-sm text-green-700">
+               <div className="bg-ocean-50 p-6 rounded-xl border border-ocean-200">
+                 <h3 className="font-semibold text-ocean-900 mb-3">What's next?</h3>
+                 <ul className="space-y-2 text-sm text-ocean-700">
                    <li className="flex items-center gap-2">
                      <Check className="w-4 h-4" />
                      Start making purchases to trigger automatic donations
@@ -366,7 +366,7 @@ function OnboardingForm({ onComplete, onSkip }: OnboardingFormProps) {
                  disabled={!isStepValid()}
                  className={`px-6 py-2 rounded-lg transition-colors flex items-center gap-2 ${
                    isStepValid()
-                     ? 'bg-green-500 text-white hover:bg-green-600'
+                     ? 'bg-ocean-500 text-white hover:bg-ocean-600'
                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                  }`}
                >
