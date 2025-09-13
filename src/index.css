@@ -51,7 +51,8 @@ body {
 
 .ocean-bg {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  
   height: 600px; /* adjust to fit your top section */
 }
 
