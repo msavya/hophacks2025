@@ -12,7 +12,7 @@ app.use(cors({ origin: "http://localhost:5173" }));
 
 app.use(express.json());
 
-const stripe = new Stripe("sk_test_51S79UsKeGWfcX29OKFQz5BH82b6tHvdOy5Hboy8txyVi4AO8xSOuItkzTHN7ofj00wclyoHI8Vb8fcyM1J52vHKS00iWjC6SKs", {
+const stripe = new Stripe(process.env.VITE_STRIPE_SECRET_API_KEY, {
   apiVersion: "2022-11-15",
 });
 

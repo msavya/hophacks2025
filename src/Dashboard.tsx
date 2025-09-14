@@ -36,7 +36,7 @@ interface CharityMap {
 function Dashboard({ onLogout }: DashboardProps) {
   // Fix 1: Use PUBLISHABLE key, not SECRET key
 const stripePromise = loadStripe(
-  "pk_test_51S79UsKeGWfcX29OObAfF2cZifhhquOvx0gU8HZL97CmFn8i1ver6ddZL8kSO3oKBkKyEx9TFbc8JrohECeQuOT100YEQu5e4Y",
+  import.meta.env.VITE_STRIPE_PUBLISHABLE_API_KEY,
   {
     locale: 'en', // Explicitly set locale to avoid module loading issues
   }
