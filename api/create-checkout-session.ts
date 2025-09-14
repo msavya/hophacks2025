@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
 // Good - you're now using the secret key
-const stripe = new Stripe(import.meta.env.VITE_STRIPE_SECRET_API_KEY, {
+const stripe = new Stripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY, {
 
 });
 
