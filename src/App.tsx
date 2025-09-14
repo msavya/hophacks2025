@@ -56,14 +56,12 @@ function App() {
     {
       icon: <Gift className="w-8 h-8" />,
       title: "Collect Characters",
-      description:
-        "Unlock cute characters and open surprise blind boxes when you reach donation milestones",
+      description: "Unlock cute characters and open surprise blind boxes",
     },
     {
       icon: <Award className="w-8 h-8" />,
       title: "Earn Badges",
-      description:
-        "Collect achievement badges for different donation amounts and consistency streaks",
+      description: "Collect achievement badges for different donation amounts",
     },
   ];
 
@@ -232,12 +230,6 @@ function App() {
               Features
             </a>
             <a
-              href="#impact"
-              className="text-gray-600 hover:text-ocean-600 transition-colors"
-            >
-              Impact
-            </a>
-            <a
               href="#characters"
               className="text-gray-600 hover:text-ocean-600 transition-colors"
             >
@@ -281,10 +273,6 @@ function App() {
                 <Chrome className="w-5 h-5" />
                 Add to Chrome - It's Free
               </button>
-              <button className="bg-gradient-to-r from-blue-800 to-blue-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3">
-                <Play className="w-5 h-5" />
-                Watch Demo
-              </button>
             </div>
           </div>
 
@@ -314,15 +302,20 @@ function App() {
                 <div className="bg-gradient-to-r from-ocean-50 to-turquoise-50 p-4 rounded-lg border border-ocean-200">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white">
-                        🐱
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-r from-yellow-400 to-orange-500">
+                        <img
+                          src="/OswaldTheWhale.png" // replace with correct PNG path
+                          alt="Oswald the Whale"
+                          className="w-8 h-8 object-contain"
+                        />
                       </div>
+
                       <div>
                         <div className="font-semibold text-gray-900">
                           New Character Unlocked!
                         </div>
                         <div className="text-sm text-gray-600">
-                          Charity Cat joined your collection
+                          Oswald the Whale joined your collection
                         </div>
                       </div>
                     </div>
@@ -331,22 +324,6 @@ function App() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-16 bg-white/95 backdrop-blur-sm relative z-10">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-gray-600">{stat.label}</div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -409,7 +386,7 @@ function App() {
                   <div className="space-y-4">
                     <div className="flex items-center gap-3 p-3 bg-ocean-50 rounded-lg">
                       <Check className="w-5 h-5 text-ocean-600" />
-                      <span>Works on 1000+ shopping sites</span>
+                      <span>Works on several shopping sites</span>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-ocean-50 rounded-lg">
                       <Check className="w-5 h-5 text-ocean-600" />
@@ -465,18 +442,28 @@ function App() {
                     Character Collection
                   </h3>
                   <div className="grid grid-cols-3 gap-4">
-                    {["🐱", "🐶", "🐰", "🦊", "🐨", "🐼"].map(
-                      (emoji, index) => (
-                        <div
-                          key={index}
-                          className="bg-gradient-to-r from-ocean-100 to-turquoise-100 p-4 rounded-xl text-center"
-                        >
-                          <div className="text-2xl mb-2">{emoji}</div>
-                          <div className="text-xs text-gray-600">Unlocked</div>
-                        </div>
-                      )
-                    )}
+                    {[
+                      { name: "Charity Cat", src: "/GeraldTheSquid.png" },
+                      { name: "Generous Dog", src: "/OswaldTheWhale.png" },
+                      { name: "Helpful Bunny", src: "/ShellyShark.png" },
+                      { name: "Friendly Fox", src: "/FionaTheFish.png" },
+                      { name: "Kind Koala", src: "/TerrenceTheTurtle.png" },
+                      { name: "Playful Panda", src: "/TravisTheCroc.png" },
+                    ].map((char, index) => (
+                      <div
+                        key={index}
+                        className="bg-gradient-to-r from-ocean-100 to-turquoise-100 p-4 rounded-xl text-center"
+                      >
+                        <img
+                          src={char.src}
+                          alt={char.name}
+                          className="w-12 h-12 mx-auto mb-2 object-contain"
+                        />
+                        <div className="text-xs text-gray-600">Unlocked</div>
+                      </div>
+                    ))}
                   </div>
+
                   <div className="bg-gradient-to-r from-ocean-100 to-turquoise-100 p-4 rounded-lg border-2 border-dashed border-ocean-300">
                     <div className="text-center text-gray-500">
                       <Gift className="w-8 h-8 mx-auto mb-2" />
@@ -492,32 +479,53 @@ function App() {
                     Achievement Badges
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gradient-to-r from-ocean-100 to-turquoise-100 p-4 rounded-xl text-center">
-                      <Award className="w-8 h-8 mx-auto text-ocean-600 mb-2" />
-                      <div className="font-semibold text-sm">First Timer</div>
-                      <div className="text-xs text-gray-600">
-                        Made first donation
+                    {[
+                      {
+                        name: "First Timer",
+                        src: "/First-timer.png",
+                        description: "Made first donation",
+                        bg: "from-ocean-100 to-turquoise-100",
+                      },
+                      {
+                        name: "Philanthropic 5",
+                        src: "/5-year.png",
+                        description: "Donated 5 times",
+                        bg: "from-turquoise-100 to-ocean-100",
+                      },
+                      {
+                        name: "Consistency",
+                        src: "/Consistency.png",
+                        description: "Donated 10 times",
+                        bg: "from-ocean-100 to-turquoise-100",
+                      },
+                      {
+                        name: "Changemaker",
+                        src: "/Philanthropist.png",
+                        description: "Donated 20 times",
+                        bg: "bg-gray-100 opacity-60",
+                      },
+                    ].map((badge, index) => (
+                      <div
+                        key={index}
+                        className={`p-4 rounded-xl text-center ${
+                          badge.bg.startsWith("bg-")
+                            ? badge.bg
+                            : `bg-gradient-to-r ${badge.bg}`
+                        }`}
+                      >
+                        <img
+                          src={badge.src}
+                          alt={badge.name}
+                          className="w-12 h-12 mx-auto mb-2 object-contain"
+                        />
+                        <div className="font-semibold text-sm">
+                          {badge.name}
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          {badge.description}
+                        </div>
                       </div>
-                    </div>
-                    <div className="bg-gradient-to-r from-turquoise-100 to-ocean-100 p-4 rounded-xl text-center">
-                      <Star className="w-8 h-8 mx-auto text-turquoise-600 mb-2" />
-                      <div className="font-semibold text-sm">Century Club</div>
-                      <div className="text-xs text-gray-600">Donated $100+</div>
-                    </div>
-                    <div className="bg-gradient-to-r from-ocean-100 to-turquoise-100 p-4 rounded-xl text-center">
-                      <Target className="w-8 h-8 mx-auto text-ocean-600 mb-2" />
-                      <div className="font-semibold text-sm">
-                        Consistency King
-                      </div>
-                      <div className="text-xs text-gray-600">30 day streak</div>
-                    </div>
-                    <div className="bg-gray-100 p-4 rounded-xl text-center opacity-60">
-                      <Heart className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                      <div className="font-semibold text-sm">
-                        Philanthropist
-                      </div>
-                      <div className="text-xs text-gray-600">Donate $1000+</div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -526,77 +534,102 @@ function App() {
         </div>
       </section>
 
-      {/* Trust Section */}
-      <section className="py-16 bg-white">
+      {/* Cute Character Display Section with Larger Cards in Two Rows */}
+      <section
+        id="characters"
+        className="py-16 bg-gradient-to-r from-ocean-50 to-turquoise-50"
+      >
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Trusted & Secure
+              Meet Your Adorable Helpers
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Your privacy and security are our top priorities. We never store
-              your payment information.
+              Collect cute characters as you donate! Each character represents a
+              small step toward big change.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-8 h-8 text-ocean-600" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12">
+            {[
+              {
+                name: "Fiona the Fish",
+                src: "/FionaTheFish.png",
+                bg: "bg-blue-100",
+                description:
+                  "A fish who named herself queen of the ocean, even scavenging up a crown from the bottoms of the coral reefs she swims through. She helps lead other fish to find food in the reefs. ",
+              },
+              {
+                name: "Gerald the Squid",
+                src: "/GeraldTheSquid.png",
+                bg: "bg-purple-100",
+                description:
+                  "A nifty little squid who loves listening to jazz and vibing in his clean ocean home. He loves cleaning up the ocean when he has a chance.",
+              },
+              {
+                name: "Oswald the Whale",
+                src: "/OswaldTheWhale.png",
+                bg: "bg-ocean-100",
+                description:
+                  "A sophisticated whale that drinks tea with Fiona the Fish whenever he has the chance. He loves making tea for all his fish friends and is never unwilling to help. ",
+              },
+              {
+                name: "Shelly the Shark",
+                src: "/ShellyShark.png",
+                bg: "bg-gray-200",
+                description:
+                  "The sweetest shark of the seas, she loves collecting drifting flowers off the surface of the water and making flower crowns for all her sea buddies. ",
+              },
+              {
+                name: "Terrence the Turtle",
+                src: "/TerrenceTheTurtle.png",
+                bg: "bg-green-100",
+                description:
+                  "Terrence is always willing to give his friends a ride, with Sheldon the Starfish always chilling on his back. ",
+              },
+              {
+                name: "Travis the Croc",
+                src: "/TravisTheCroc.png",
+                bg: "bg-teal-100",
+                description:
+                  "Travis the Croc is considered the coolest animal, both above and below water. He is always there to stand up for his friends and fight against predators. ",
+              },
+            ].map((char, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center p-8 rounded-3xl bg-white shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
+              >
+                <div
+                  className={`w-28 h-28 flex items-center justify-center mb-6 rounded-full ${char.bg}`}
+                >
+                  <img
+                    src={char.src}
+                    alt={char.name}
+                    className="w-20 h-20 object-contain"
+                  />
+                </div>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900 text-center">
+                  {char.name}
+                </h3>
+                <p className="text-gray-700 text-center mt-2 text-sm md:text-base">
+                  {char.description}
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Bank-Level Security
-              </h3>
-              <p className="text-gray-600">
-                256-bit SSL encryption protects all your data
-              </p>
-            </div>
-
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-turquoise-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Verified Charities
-              </h3>
-              <p className="text-gray-600">
-                All partner organizations are vetted and certified
-              </p>
-            </div>
-
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-ocean-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-8 h-8 text-ocean-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                100% Transparent
-              </h3>
-              <p className="text-gray-600">
-                Track exactly where your donations go
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
-
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-ocean-500 to-turquoise-600">
         <div className="max-w-4xl mx-auto text-center px-6">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Start Making a Difference Today
           </h2>
-          <p className="text-xl text-ocean-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of users who are changing the world, one purchase at
-            a time. It's free, fun, and incredibly rewarding.
-          </p>
           <button className="bg-white text-gray-900 px-10 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 mx-auto">
             <Chrome className="w-5 h-5" />
             Add to Chrome - It's Free
             <Download className="w-5 h-5" />
           </button>
-          <p className="text-ocean-200 text-sm mt-4">
-            No credit card required • Install in 30 seconds • Works everywhere
-          </p>
         </div>
       </section>
 
@@ -629,8 +662,8 @@ function App() {
               </h2>
               <p className="text-gray-600">
                 {isSignUp
-                  ? "Sign up for your RoundUp account"
-                  : "Sign in to your RoundUp account"}
+                  ? "Sign up for your RippleEffect account"
+                  : "Sign in to your RippleEffect account"}
               </p>
             </div>
 

@@ -1,23 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../firebase";
 import {
   Heart,
   TrendingUp,
   Gift,
   Award,
   Users,
-  Shield,
-  Star,
-  Target,
   BarChart3,
   Settings,
   LogOut,
   Plus,
-  Calendar,
   DollarSign,
-  Activity,
   Zap,
-  Trophy,
-  Sparkles,
 } from "lucide-react";
 
 interface DashboardProps {
@@ -26,6 +21,66 @@ interface DashboardProps {
 
 function Dashboard({ onLogout }: DashboardProps) {
   const [activeTab, setActiveTab] = useState("overview");
+  const [localCity, setLocalCity] = useState("");
+  const [localState, setLocalState] = useState("");
+  const [location, setLocation] = useState(""); // for country
+  const [newCharity, setNewCharity] = useState("");
+  const [charitiesInterestedIn, setCharitiesInterestedIn] = useState<string[]>(
+    []
+  );
+
+  // inside your component
+  const handleAddCharity = async () => {
+    if (!newCharity.trim()) return;
+
+    try {
+      const response = await fetch("/api/add-charity", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ charity: newCharity }),
+      });
+
+      const data = await response.json();
+      console.log("Validation result:", data);
+
+      if (data.valid) {
+        // save to Firebase here
+        const userRef = doc(db, "users", auth.currentUser!.uid);
+        await setDoc(
+          userRef,
+          {
+            charitiesInterestedIn: [
+              ...(charitiesInterestedIn || []),
+              newCharity,
+            ],
+          },
+          { merge: true }
+        );
+        alert(`${newCharity} added!`);
+        setNewCharity("");
+      } else {
+        alert(`${newCharity} is not recognized as a valid charity.`);
+      }
+    } catch (error) {
+      console.error("Error adding charity:", error);
+      alert("Something went wrong while adding charity.");
+    }
+  };
+
+  useEffect(() => {
+    if (!auth.currentUser) return;
+    const fetchUserData = async () => {
+      const docRef = doc(db, "users", auth.currentUser.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setLocalCity(data.localCity || "");
+        setLocalState(data.localState || "");
+        setLocation(data.location || "");
+      }
+    };
+    fetchUserData();
+  }, []);
 
   // Mock user data - in real app, this would come from Firebase
   const userStats = {
@@ -398,11 +453,11 @@ function Dashboard({ onLogout }: DashboardProps) {
                           : "bg-gray-100 border-2 border-gray-200 opacity-50"
                       }`}
                     >
-                       <img
-                         src={character.icon}
-                         alt={character.name}
-                         className="w-20 h-20 mx-auto mb-2"
-                       />
+                      <img
+                        src={character.icon}
+                        alt={character.name}
+                        className="w-20 h-20 mx-auto mb-2"
+                      />
                       <div className="text-xs text-gray-600 font-medium mb-1">
                         {character.name}
                       </div>
@@ -496,51 +551,110 @@ function Dashboard({ onLogout }: DashboardProps) {
                 <h3 className="text-xl font-semibold text-gray-900">
                   Account Settings
                 </h3>
+
+                {/* Location Section */}
                 <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4">
+                    Location
+                  </h4>
+
+                  {/* City */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Notifications
+                    <label className="block text-gray-700 font-medium mb-2">
+                      City
                     </label>
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        defaultChecked
-                        className="rounded border-gray-300 text-ocean-600 focus:ring-ocean-500"
-                      />
-                      <span className="ml-2 text-sm text-gray-600">
-                        Receive donation confirmations
-                      </span>
-                    </div>
+                    <input
+                      type="text"
+                      value={localCity}
+                      onChange={(e) => setLocalCity(e.target.value)}
+                      placeholder="Enter your city"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-ocean-500 focus:border-transparent"
+                    />
                   </div>
+
+                  {/* State */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Monthly Reports
+                    <label className="block text-gray-700 font-medium mb-2">
+                      State
                     </label>
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        defaultChecked
-                        className="rounded border-gray-300 text-ocean-600 focus:ring-ocean-500"
-                      />
-                      <span className="ml-2 text-sm text-gray-600">
-                        Get monthly impact summaries
-                      </span>
-                    </div>
+                    <input
+                      type="text"
+                      value={localState}
+                      onChange={(e) => setLocalState(e.target.value)}
+                      placeholder="Enter your state"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-ocean-500 focus:border-transparent"
+                    />
                   </div>
+
+                  {/* Country */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Default Charity
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Country
                     </label>
-                    <select className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-ocean-500 focus:ring-ocean-500">
-                      <option>Red Cross</option>
-                      <option>UNICEF</option>
-                      <option>Doctors Without Borders</option>
-                      <option>World Wildlife Fund</option>
-                    </select>
+                    <input
+                      type="text"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      placeholder="Enter your country"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-ocean-500 focus:border-transparent"
+                    />
                   </div>
-                  <button className="bg-ocean-500 text-white px-6 py-2 rounded-lg hover:bg-ocean-600 transition-colors">
-                    Save Settings
+
+                  {/* Save Button */}
+                  <button
+                    onClick={async () => {
+                      if (!auth.currentUser) return;
+                      try {
+                        await setDoc(
+                          doc(db, "users", auth.currentUser.uid),
+                          { localCity, localState, location },
+                          { merge: true }
+                        );
+                        alert("Location updated!");
+                      } catch (error) {
+                        console.error("Error updating location:", error);
+                      }
+                    }}
+                    className="bg-ocean-500 text-white px-6 py-2 rounded-lg hover:bg-ocean-600 transition-colors"
+                  >
+                    Save Location
                   </button>
+                </div>
+
+                {/* Charities Section */}
+                <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4">
+                    Charities Interested In
+                  </h4>
+
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-2">
+                      Add Charity
+                    </label>
+                    <input
+                      type="text"
+                      value={newCharity}
+                      onChange={(e) => setNewCharity(e.target.value)}
+                      placeholder="Type charity name"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-ocean-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <button
+                    onClick={handleAddCharity}
+                    className="bg-turquoise-500 text-white px-6 py-2 rounded-lg hover:bg-turquoise-600 transition-colors"
+                  >
+                    Add Charity
+                  </button>
+
+                  {/* Display list of charities */}
+                  <ul className="mt-4 list-disc pl-5">
+                    {charitiesInterestedIn.map((c, idx) => (
+                      <li key={idx} className="text-gray-700">
+                        {c}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             )}
