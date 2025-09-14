@@ -192,26 +192,26 @@ function App() {
 
       {/* Swimming Characters */}
       <div className="swimming-character fish1">
-        <img src="/FionaTheFish.png" alt="Fiona" className="character-img" />
+        <img src="/FionatheFish.png" alt="Fiona" className="character-img" />
       </div>
       <div className="swimming-character fish2">
-        <img src="/GeraldTheSquid.png" alt="Gerald" className="character-img" />
+        <img src="/GeraldtheSquid.png" alt="Gerald" className="character-img" />
       </div>
       <div className="swimming-character fish3">
-        <img src="/OswaldTheWhale.png" alt="Oswald" className="character-img" />
+        <img src="/OswaldtheWhale.png" alt="Oswald" className="character-img" />
       </div>
       <div className="swimming-character fish4">
-        <img src="/ShellyShark.png" alt="Shelly" className="character-img" />
+        <img src="/ShellytheShark.png" alt="Shelly" className="character-img" />
       </div>
       <div className="swimming-character fish5">
         <img
-          src="/TerrenceTheTurtle.png"
+          src="/TerrencetheTurtle.png"
           alt="Terrence"
           className="character-img"
         />
       </div>
       <div className="swimming-character fish6">
-        <img src="/TravisTheCroc.png" alt="Travis" className="character-img" />
+        <img src="/TravistheCroc.png" alt="Travis" className="character-img" />
       </div>
       {/* Header */}
       <header className="bg-white/90 backdrop-blur-sm border-b border-white/20 sticky top-0 z-50">
