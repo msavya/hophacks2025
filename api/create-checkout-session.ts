@@ -3,8 +3,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
 // Good - you're now using the secret key
-const stripe = new Stripe("sk_test_51S79UsKeGWfcX29OKFQz5BH82b6tHvdOy5Hboy8txyVi4AO8xSOuItkzTHN7ofj00wclyoHI8Vb8fcyM1J52vHKS00iWjC6SKs", {
-  apiVersion: '2023-10-16',
+const stripe = new Stripe(process.env.VITE_STRIPE_SECRET_API_KEY, {
+
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
