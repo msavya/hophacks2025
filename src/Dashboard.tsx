@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   doc,
   query,
@@ -10,6 +10,8 @@ import {
   addDoc,
 } from "firebase/firestore";
 import { auth, db } from "../firebase";
+import { loadStripe } from "@stripe/stripe-js";
+
 import {
   Heart,
   TrendingUp,
@@ -19,7 +21,6 @@ import {
   BarChart3,
   Settings,
   LogOut,
-  Plus,
   DollarSign,
   Zap,
 } from "lucide-react";
@@ -29,7 +30,17 @@ interface DashboardProps {
   onLogout: () => void;
 }
 
+interface CharityMap {
+  [key: string]: [string, number]; // [stripeAccountId, totalDonated]
+}
 function Dashboard({ onLogout }: DashboardProps) {
+  // Fix 1: Use PUBLISHABLE key, not SECRET key
+const stripePromise = loadStripe(
+  "pk_test_51S79UsKeGWfcX29OObAfF2cZifhhquOvx0gU8HZL97CmFn8i1ver6ddZL8kSO3oKBkKyEx9TFbc8JrohECeQuOT100YEQu5e4Y",
+  {
+    locale: 'en', // Explicitly set locale to avoid module loading issues
+  }
+);
   const [activeTab, setActiveTab] = useState("overview");
   const [localCity, setLocalCity] = useState("");
   const [localState, setLocalState] = useState("");
@@ -103,10 +114,72 @@ function Dashboard({ onLogout }: DashboardProps) {
     Array<{ name: string; description: string; category: string }>
   >([]);
   const [isLoadingNearby, setIsLoadingNearby] = useState(false);
+  const [charitiesDonatedTo, setCharitiesDonatedTo] = useState<CharityMap>({});
 
-  const [response, setResponse] = useState([]);
-  const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!auth.currentUser) return;
+      const userRef = doc(db, "users", auth.currentUser.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        setCharitiesDonatedTo(data.charitiesDonatedTo || {});
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+
+  // Fix 2: Complete handleDonate function with proper error handling
+  const handleDonate = async (charityName: string, charityStripeAccountId: string) => {
+
+    const amount = (charitiesDonatedTo[charityName] && charitiesDonatedTo[charityName][1]) || 0;
+    if (!amount || amount <= 0) {
+      return alert("Invalid donation amount");
+    }
+
+    try {
+      // 1️⃣ Call your backend to create a Checkout Session
+      const response = await fetch("http://localhost:4242/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: Math.round(amount * 100), // convert dollars to cents
+          nonprofitStripeAccountId: charityStripeAccountId,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.error) {
+        alert("Failed to create session");
+        return;
+      }
+
+      // 2️⃣ Load Stripe.js (with your publishable key)
+      const stripe = await stripePromise;
+      if (!stripe) {
+        throw new Error("Stripe failed to initialize");
+      }
+
+      // 3️⃣ Redirect user securely
+      const result = await stripe.redirectToCheckout({ sessionId: data.id });
+      if (result.error) {
+        console.error(result.error.message);
+        alert("Stripe checkout failed. Try again.");
+      }
+    } catch (err) {
+      console.error("Donation error:", err);
+      alert("Something went wrong. Please try again.");
+    }
+  };
+
+
+
+
 
   const handleAddCharity = async () => {
     if (!newCharity.trim()) return;
@@ -203,6 +276,7 @@ Format: "STATUS: YES/NO | OFFICIAL_NAME: [official name or suggestions] | DESCRI
         [charityToAdd]: description || "Registered nonprofit organization",
       }));
 
+      // Save to Firebase
       const userRef = doc(db, "users", auth.currentUser!.uid);
       await setDoc(
         userRef,
@@ -210,8 +284,44 @@ Format: "STATUS: YES/NO | OFFICIAL_NAME: [official name or suggestions] | DESCRI
         { merge: true }
       );
 
-      alert(`✅ "${charityToAdd}" added successfully!`);
-      setNewCharity("");
+      if (status === "YES" && officialName) {
+        alert(`✅ ${charityToAdd} added successfully!\n\n${description || "Registered nonprofit organization"}`);
+        setNewCharity("");
+      } else if (status === "NO" && officialName) {
+        // Charity not recognized - show suggestions
+        const suggestions = officialName;
+        const userConfirmed = confirm(
+          `❌ "${newCharity}" was not recognized as a registered nonprofit.\n\n` +
+          `Here are some similar legitimate charities you might have meant:\n\n${suggestions}\n\n` +
+          `Would you like to add "${newCharity}" anyway? (Click OK to add, Cancel to try a different name)`
+        );
+        
+        if (userConfirmed) {
+          // Update local state for unverified charity
+          const unverifiedCharities = [...charitiesInterestedIn, newCharity];
+          setCharitiesInterestedIn(unverifiedCharities);
+          setOfficialCharityNames(prev => ({
+            ...prev,
+            [newCharity]: "Unverified organization"
+          }));
+
+          // Save to Firebase
+          await setDoc(
+            userRef,
+            {
+              charitiesInterestedIn: unverifiedCharities,
+            },
+            { merge: true }
+          );
+
+          alert(`✅ ${newCharity} added (unverified). You can always edit this later.`);
+          setNewCharity("");
+        }
+      } else {
+        // Unexpected response format
+        alert(`⚠️ Unable to verify "${newCharity}". The AI response was unclear. Would you like to add it anyway?`);
+      }
+
     } catch (error) {
       console.error("Error adding charity:", error);
       alert("Something went wrong while adding charity. Please try again.");
@@ -308,7 +418,7 @@ Format: "STATUS: YES/NO | OFFICIAL_NAME: [official name or suggestions] | DESCRI
                 !line.includes("DESCRIPTION:")
             ) || [];
 
-        const charities = lines.slice(0, 8).map((line, index) => {
+        const charities = lines.slice(0, 8).map((line) => {
           // Try to extract name and description if separated by dash or colon
           const parts = line.split(/[-:]/);
           const name = parts[0]?.trim() || line.trim();
@@ -370,7 +480,7 @@ Format: "STATUS: YES/NO | OFFICIAL_NAME: [official name or suggestions] | DESCRI
         const newCharityRef = doc(charitiesCollection);
         charityId = newCharityRef.id;
 
-        const isLocal = localState === charity.state; // optional
+        const isLocal = localState === localState; // optional - using localState for now
 
         await setDoc(newCharityRef, {
           id: charityId,
@@ -431,11 +541,16 @@ Format: "STATUS: YES/NO | OFFICIAL_NAME: [official name or suggestions] | DESCRI
         const donationsSnap = await getDocs(
           query(collection(db, "donations"), where("userId", "==", userId))
         );
-        const donationsData = donationsSnap.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          source: doc.data().source || doc.data().item || "",
-        }));
+        const donationsData = donationsSnap.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            amount: data.amount || 0,
+            charity: data.charity || "",
+            date: data.date || "",
+            item: data.item || data.source || "",
+          };
+        });
         setUserDonations(donationsData);
 
         const totalDonations = donationsData.length;
@@ -508,7 +623,13 @@ Format: "STATUS: YES/NO | OFFICIAL_NAME: [official name or suggestions] | DESCRI
         const userBadgeSnap = await getDocs(
           query(collection(db, "user_badges"), where("userId", "==", userId))
         );
-        const existingUserBadges = userBadgeSnap.docs.map((doc) => doc.data());
+        const existingUserBadges = userBadgeSnap.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            badgeId: data.badgeId || "",
+            earnedAt: data.earnedAt || "",
+          };
+        });
 
         // Check which badges should now be awarded
         const newBadges = badgeMilestones
@@ -544,73 +665,6 @@ Format: "STATUS: YES/NO | OFFICIAL_NAME: [official name or suggestions] | DESCRI
 
     fetchUserDataAndDonations();
   }, []);
-
-  // Mock user data - in real app, this would come from Firebase
-  const userStats = {
-    totalDonated: 127.5,
-    thisMonth: 23.4,
-    charitiesSupported: 15,
-    peopleHelped: 892,
-    currentStreak: 12,
-    charactersUnlocked: 8,
-    badgesEarned: 6,
-    nextMilestone: 200,
-  };
-
-  const recentDonations = [
-    {
-      id: 1,
-      amount: 0.77,
-      charity: "Red Cross",
-      date: "2024-01-15",
-      item: "Amazon Purchase",
-    },
-    {
-      id: 2,
-      amount: 0.43,
-      charity: "UNICEF",
-      date: "2024-01-14",
-      item: "Coffee Shop",
-    },
-    {
-      id: 3,
-      amount: 0.89,
-      charity: "Doctors Without Borders",
-      date: "2024-01-13",
-      item: "Grocery Store",
-    },
-    {
-      id: 4,
-      amount: 0.56,
-      charity: "World Wildlife Fund",
-      date: "2024-01-12",
-      item: "Online Shopping",
-    },
-    {
-      id: 5,
-      amount: 0.34,
-      charity: "Feeding America",
-      date: "2024-01-11",
-      item: "Restaurant",
-    },
-  ];
-
-  const characters = [
-    { name: "Fiona the Fish", icon: "/FionaTheFish.png" },
-    { name: "Gerald the Squid", icon: "/GeraldTheSquid.png" },
-    { name: "Oswald the Whale", icon: "/OswaldTheWhale.png" },
-    { name: "Shelly the Shark", icon: "/ShellyTheShark.png" },
-    { name: "Terrence the Turtle", icon: "/TerrenceTheTurtle.png" },
-    { name: "Travis the Croc", icon: "/TravisTheCroc.png" },
-  ];
-  const badges = [
-    { name: "First Timer", icon: "/First-timer.png", earned: true },
-    { name: "Philanthropic Five", icon: "/5-year.png", earned: true },
-    { name: "Consistency", icon: "/Consistency.png", earned: true },
-    { name: "Changemaker", icon: "/Philanthropist.png", earned: false },
-    { name: "Charity Champion", icon: "/Charity Champion.png", earned: false },
-    { name: "Impact Maker", icon: "/Impact-Maker.png", earned: true },
-  ];
 
   const tabs = [
     { id: "overview", name: "Overview", icon: BarChart3 },
@@ -801,6 +855,51 @@ Format: "STATUS: YES/NO | OFFICIAL_NAME: [official name or suggestions] | DESCRI
                   </div>
                 </div>
 
+                <div className="max-w-3xl mx-auto p-6 grid gap-6">
+                  <h1 className="text-3xl font-bold text-center mb-6">🌱 Your Impact</h1>
+
+                  {Object.entries(charitiesDonatedTo).length === 0 ? (
+                    <div className="text-center text-gray-600 text-lg">
+                      You haven't donated yet. Make your first donation to see your impact here!
+                    </div>
+                  ) : (
+                    Object.entries(charitiesDonatedTo).map(([charityName, [stripeAccountId, total]]) => (
+                      <div
+                        key={charityName}
+                        className="bg-white border border-gray-200 rounded-xl p-6 shadow hover:shadow-md transition"
+                      >
+                        <div className="flex justify-between items-center">
+                          {/* Left Side: Icon + Charity Info */}
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-ocean-100 rounded-full flex items-center justify-center">
+                              <Heart className="w-5 h-5 text-ocean-600" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900">
+                                {charityName}
+                              </h3>
+                              <p className="text-sm text-gray-500">
+                                Total Amount Saved Up:{" "}
+                                <span className="text-ocean-600 font-medium">
+                                  ${total.toFixed(2)}
+                                </span>
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Right Side: Donate Button */}
+                          <button
+                            onClick={() => handleDonate(charityName, stripeAccountId)}
+                            className="px-4 py-2 bg-ocean-600 text-white text-sm font-medium rounded-lg hover:bg-ocean-700 transition"
+                          >
+                            Donate Now
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
                 {/* Recent Donations */}
                 <div className="bg-white border border-gray-200 rounded-xl p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -877,7 +976,7 @@ Format: "STATUS: YES/NO | OFFICIAL_NAME: [official name or suggestions] | DESCRI
                                 +${donation.amount}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-gray-500">
-                                {donation.source}
+                                {donation.item}
                               </td>
                             </tr>
                           ))
@@ -1035,19 +1134,15 @@ Format: "STATUS: YES/NO | OFFICIAL_NAME: [official name or suggestions] | DESCRI
                   </h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {badges.map((badge, index) => {
+                  {badgeDefinitions.map((badge) => {
                     // Check if the badge is earned
-                    const badgeDef = badgeDefinitions.find(
-                      (bd) => bd.name === badge.name
-                    );
-
                     const earned = userBadges.some(
-                      (b) => b.badgeId === badgeDef?.id
+                      (b) => b.badgeId === badge.id
                     );
 
                     return (
                       <div
-                        key={index}
+                        key={badge.id}
                         className={`p-6 rounded-xl text-center transition-all ${
                           earned
                             ? "bg-gradient-to-r from-ocean-100 to-turquoise-100 border-2 border-ocean-200"
